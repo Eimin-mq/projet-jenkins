@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SONAR_TOKEN = credentials('sonar-token-id')
-        MAVEN_HOME = tool name: 'Maven', type: 'ToolLocation'
+        MAVEN_HOME = tool name: 'Maven3', type: 'ToolLocation'
     }
 
     stages {
@@ -26,7 +26,7 @@ pipeline {
                         ${MAVEN_HOME}/bin/mvn sonar:sonar \
                         -Dsonar.projectKey=sqa_2160fc6fd0016fdb3e0047d8095144b22ab8cd62 \
                         -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=${sonar-token-id}
+                        -Dsonar.login=${SONAR_TOKEN}
                     """
                 }
             }
