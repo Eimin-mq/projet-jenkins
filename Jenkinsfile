@@ -2,31 +2,28 @@ pipeline {
     agent any
 
     environment {
-        SONAR_TOKEN = credentials('sonar-token-id')
-        MAVEN_HOME = tool name: 'Maven3', type: 'ToolLocation'
+        // Définir le token SonarQube dans les variables d'environnement
+        SONAR_TOKEN = 'sqp_12d5514c18a0c857383266dd66268233f66e8ad6' // Remplacer si nécessaire
     }
 
     stages {
         stage('Checkout') {
             steps {
+                // Récupérer le code du dépôt Git
                 checkout scm
             }
         }
-        stage('Build') {
+
+        stage('Build & Verify') {
             steps {
+                // Exécuter Maven3 pour nettoyer, vérifier et analyser avec SonarQube
                 script {
-                         sh "${MAVEN_HOME}/bin/mvn clean install"
-                }
-            }
-        }
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SOnarQube') {
                     sh """
-                        ${MAVEN_HOME}/bin/mvn sonar:sonar \
-                        -Dsonar.projectKey=sqa_2160fc6fd0016fdb3e0047d8095144b22ab8cd62 \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=${SONAR_TOKEN}
+                        maven3 clean verify sonar:sonar \
+                            -Dsonar.projectKey=github-projet-jenkins \
+                            -Dsonar.projectName='SonJenHub' \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.token=${SONAR_TOKEN}
                     """
                 }
             }
@@ -35,11 +32,10 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline terminé avec succès !'
+            echo "Pipeline terminé avec succès"
         }
         failure {
-            echo 'Échec du pipeline.'
+            echo "Pipeline échoué"
         }
     }
 }
-        
