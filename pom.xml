@@ -1,10 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Mise à jour avec vos informations -->
     <groupId>Test</groupId>
     <artifactId>projet-jenkins</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+
+    <properties>
+        <!-- Configuration de SonarQube -->
+        <sonar.projectKey>github-projet-jenkins</sonar.projectKey>
+        <sonar.projectName>SonJenHub</sonar.projectName>
+        <sonar.host.url>http://localhost:9000</sonar.host.url> <!-- Remplacez par votre URL de SonarQube -->
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.9.0.918</version> <!-- Utilisez la version la plus récente -->
+            </plugin>
+        </plugins>
+    </build>
 </project>
