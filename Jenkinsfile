@@ -1,46 +1,41 @@
 pipeline {
-    agent any // Utilise n'importe quel agent Jenkins disponible
-
-    tools {
-        maven 'Maven' // Nom de l'installation Maven configurée dans Jenkins
+    agent any
+    
+    environment {
+        SONAR_TOKEN = credentials('sonar-token-id')
     }
 
     stages {
-        stage("Build") {
+        stage('Checkout') {
             steps {
-                echo 'Building the project...'
-                // Vérifie la version de Maven installée
-                sh 'mvn -v'
-                // Compile le projet
+                checkout scm
+            }
+        }
+        stage('Build') {
+            steps {
                 sh 'mvn clean install'
             }
         }
-
-        stage("Test") {
+        stage('SonarQube Analysis') {
             steps {
-                echo 'Running tests...'
-                // Exécute les tests unitaires
-                sh 'mvn test'
-            }
-        }
-
-        stage("Deploy") {
-            steps {
-                echo 'Deploying the application...'
-                // Ajouter des étapes spécifiques au déploiement
+                withSonarQubeEnv('SonJenHub') {
+                    sh """
+                        mvn sonar:sonar \
+                        -Dsonar.projectKey=sqa_2160fc6fd0016fdb3e0047d8095144b22ab8cd62 \
+                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.login=${SONAR_TOKEN}
+                    """
+                }
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline finished.'
-        }
         success {
-            echo 'Build succeeded.'
+            echo 'Pipeline terminé avec succès !'
         }
         failure {
-            echo 'Build failed.'
+            echo 'Échec du pipeline.'
         }
     }
 }
